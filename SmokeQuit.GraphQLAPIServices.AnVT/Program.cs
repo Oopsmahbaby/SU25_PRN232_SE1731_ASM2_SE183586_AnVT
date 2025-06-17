@@ -12,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddGraphQLServer()
 	.AddQueryType<BlogPostsAnVTQueries>()
+	.AddMutationType<Mutations>()
 	.BindRuntimeType<DateTime, DateTimeType>();
 builder.Services.AddScoped<IBlogPostsAnVTService, BlogPostsAnVTService>();
 builder.Services.AddScoped<IServiceProviders, ServiceProviders>();

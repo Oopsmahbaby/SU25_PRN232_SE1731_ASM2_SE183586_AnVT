@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmokeQuit.Repositories.AnVT.DBContext;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SmokeQuit.Repositories.AnVT.Basic
 {

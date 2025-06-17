@@ -9,7 +9,7 @@ namespace SmokeQuit.Repositories.AnVT
 	{
 		public QuitPlansAnhDtn_AnVTRepository()
 		{
-			
+
 		}
 
 		public QuitPlansAnhDtn_AnVTRepository(SU25_PRN232_SE1731_G6_SmokeQuitContext context)
