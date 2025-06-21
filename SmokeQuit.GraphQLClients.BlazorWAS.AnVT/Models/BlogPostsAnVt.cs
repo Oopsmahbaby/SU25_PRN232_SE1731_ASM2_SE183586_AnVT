@@ -40,5 +40,5 @@ public partial class BlogPostsAnVt
 
 public partial class BlogPostsAnVtGraphQLResponse
 {
-    public List<BlogPostsAnVt> BlogPostsAnVts { get; set; }
+    public List<BlogPostsAnVt> All { get; set; }
 }

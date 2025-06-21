@@ -1,5 +1,85 @@
-﻿<h3>BlogPostsAnVtList</h3>
+﻿@page "/BlogPostAnVts/BlogPostAnVtList"
+@using SmokeQuit.GraphQLClients.BlazorWAS.AnVT.GraphQlClients
+@using SmokeQuit.GraphQLClients.BlazorWAS.AnVT.Models
+
+<h3 class="mb-4">📚 Danh sách Blog Posts</h3>
+
+<div class="mb-3 d-flex justify-content-between">
+    <input class="form-control w-50" placeholder="🔍 Tìm theo tiêu đề, chuyên mục, tag, người viết..."
+           @bind="searchTerm" @bind:event="oninput" />
+    <button class="btn btn-primary ms-2" @onclick="CreateNew">➕ Tạo mới</button>
+</div>
+
+@if (filteredPosts == null)
+{
+    <p>Đang tải dữ liệu...</p>
+}
+else if (!filteredPosts.Any())
+{
+    <p>Không tìm thấy bài viết nào phù hợp.</p>
+}
+else
+{
+    <table class="table table-bordered table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Tiêu đề</th>
+                <th>Chuyên mục</th>
+                <th>Tags</th>
+                <th>Tác giả</th>
+                <th>Ngày tạo</th>
+                <th class="text-center">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in filteredPosts)
+            {
+                <tr>
+                    <td>@post.BlogPostsAnVtid</td>
+                    <td>@post.Title</td>
+                    <td>@post.Category</td>
+                    <td>@post.Tags</td>
+                    <td>@post.User?.UserName</td>
+                    <td>@(post.CreatedAt?.ToString("dd/MM/yyyy") ?? "Chưa nhập")</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-info me-1" @onclick="@(() => ViewDetails(post.BlogPostsAnVtid))">👁</button>
+                        <button class="btn btn-sm btn-warning me-1" @onclick="@(() => EditPost(post.BlogPostsAnVtid))">✏️</button>
+                        <button class="btn btn-sm btn-danger" @onclick="@(() => DeletePost(post.BlogPostsAnVtid))">🗑</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code {
+    private List<BlogPostsAnVt> blogPosts;
+    private string searchTerm = "";
 
+    [Inject] public GraphQLConsumer GraphQLConsumer { get; set; }
+    [Inject] public NavigationManager Nav { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        blogPosts = await GraphQLConsumer.GetBlogPosts();
+    }
+
+    private IEnumerable<BlogPostsAnVt> filteredPosts =>
+        string.IsNullOrWhiteSpace(searchTerm)
+            ? blogPosts
+            : blogPosts.Where(p =>
+                (p.Title ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                (p.Category ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                (p.Tags ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                (p.User?.UserName ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+
+    private void CreateNew() => Nav.NavigateTo("/BlogPostAnVts/BlogPostAnVtForm");
+    private void EditPost(int id) => Nav.NavigateTo($"/BlogPostAnVts/Edit/{id}");
+    private void ViewDetails(int id) => Nav.NavigateTo($"/BlogPostAnVts/Details/{id}");
+    private void DeletePost(int id)
+    {
+        // TODO: Gọi API xóa hoặc hiển thị xác nhận xóa
+        Console.WriteLine($"Yêu cầu xóa bài viết ID: {id}");
+    }
 }

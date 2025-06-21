@@ -1,5 +1,65 @@
-﻿<h3>BlogPostsAnVtForm</h3>
+﻿@page "/BlogPostAnVts/BlogPostAnVtForm"
+@using SmokeQuit.GraphQLClients.BlazorWAS.AnVT.GraphQlClients
+@using SmokeQuit.GraphQLClients.BlazorWAS.AnVT.Models
+@inject GraphQLConsumer GraphQLConsumer
+@inject NavigationManager Nav
+
+<h3>📝 Tạo bài viết mới</h3>
+
+<EditForm Model="newPost" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Tiêu đề</label>
+        <InputText class="form-control" @bind-Value="newPost.Title" />
+    </div>
+
+    <div class="mb-3">
+        <label>Nội dung</label>
+        <InputTextArea class="form-control" @bind-Value="newPost.Content" />
+    </div>
+
+    <div class="mb-3">
+        <label>Chuyên mục</label>
+        <InputText class="form-control" @bind-Value="newPost.Category" />
+    </div>
+
+    <div class="mb-3">
+        <label>Tags (cách nhau bởi dấu phẩy)</label>
+        <InputText class="form-control" @bind-Value="newPost.Tags" />
+    </div>
+
+    <div class="mb-3">
+        <label>Công khai?</label>
+        <InputCheckbox class="form-check-input" @bind-Value="newPost.IsPublic" />
+    </div>
+
+    <div class="mb-3">
+        <label>Người viết (UserId)</label>
+        <InputNumber class="form-control" @bind-Value="newPost.UserId" />
+    </div>
+
+    <button type="submit" class="btn btn-success">💾 Lưu</button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="GoBack">🔙 Quay lại</button>
+</EditForm>
 
 @code {
+    private BlogPostsAnVt newPost = new();
 
+    private async Task HandleValidSubmit()
+    {
+        var createdId = await GraphQLConsumer.CreateBlogPost(newPost);
+        if (createdId.HasValue)
+        {
+            Nav.NavigateTo("/BlogPostAnVts/BlogPostAnVtList");
+        }
+        else
+        {
+            Console.WriteLine("Tạo bài viết thất bại.");
+        }
+    }
+
+
+    private void GoBack() => Nav.NavigateTo("/BlogPostAnVts/BlogPostAnVtList");
 }
